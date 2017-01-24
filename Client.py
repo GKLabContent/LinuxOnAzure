@@ -1,4 +1,9 @@
 #! /usr/bin/python3
+
+#This file serves as a test client for the MessageServer.py script
+#There are two message types that can be tested:
+#1 - Ping.  This returns the local IP address and server name of the message server
+#2 - Load Test. This runs a load test on the server for a specified number of minutes.
 import socket
 import os
 import json
