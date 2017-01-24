@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+#This script runs a "messaging service".  It accepts a TCP request over
+#port 8080 and returns a response.  There are two command messages that
+#the message server supports - ping (1) and load test (2).
 import asyncore
 import socket, sys, struct, os
 import uuid
