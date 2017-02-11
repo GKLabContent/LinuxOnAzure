@@ -1,0 +1,1 @@
+This file is designed to test the pull process on lab VMs.  Add the current date at the end of the file as an easy change test.
