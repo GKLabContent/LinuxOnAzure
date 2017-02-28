@@ -7,4 +7,4 @@ chmod +x /usr/msgsvr/MessageServer.py
 chmod +x /etc/init.d/msgsvrstart.sh
 
 update-rc.d msgsvrstart.sh defaults
-/usr/msgsvr/MessageServer.py
+/usr/msgsvr/MessageServer.py &
