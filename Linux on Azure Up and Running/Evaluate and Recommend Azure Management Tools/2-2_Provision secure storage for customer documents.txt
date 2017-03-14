@@ -1,0 +1,94 @@
+﻿
+#Challenge: Challenge: Migrate On-premises Storage to Azure      
+#Exercise: Provision secure storage for customer documents
+#Task: Create the storage account and the container.
+
+azure login
+
+azure storage account create --sku-name LRS --kind Storage -l <your location> -g challenges-storage $account
+
+azure storage account keys list -g challenges-storage $account
+
+azure storage container create --container customerdocs -p Off -a $account -k $key
+
+
+
+
+#Task: Create access policies, shared access signatures.
+
+azure storage container policy create --container customerdocs --name cdrw –-start “<today>” --expiry "<One year from today>" --permissions rwl -a $account -k $key
+
+azure storage container policy create --container customerdocs --name cdro –-start “<today>” --expiry "<One year from today>" --permissions r -a $account -k $key
+
+azure storage container sas create --container customerdocs --policy cdrw -a $account -k $key > rw.sas
+
+azure storage container sas create --container customerdocs --policy cdro -a $account -k $key > ro.sas
+
+
+
+
+#Task: Test the shared access signatures.
+
+cat rw.sas
+
+azure storage blob upload -f image1.jpg  --container customerdocs --account-name $account --sas "<read, write, list SAS>"
+
+azure storage blob upload -f invoice.txt  --container customerdocs --account-name $account --sas "<read, write, list SAS>"
+
+azure storage blob list --container customerdocs -a $account --sas "<read, write, list SAS>"
+
+azure storage blob download --container customerdocs -b image1.jpg -a $account --sas "<your SAS>" -d image1.1.jpg
+
+
+
+
+#Task: Modify the Python script.
+
+pip3 install azure-storage==0.32.0
+
+#! /usr/bin/python3
+
+from azure.storage.blob import BlockBlobService
+
+from azure.storage.blob import ContentSettings
+
+#Set the value of the acctname variable to the name of your storage account
+
+acctname = ‘<your account name>’
+
+
+#Set the value of the token variable to the value of the SAS token generated from the read, write, list policy
+
+token=’<read, write, list SAS token>’
+
+container='customerdocs'
+
+block_blob_service = BlockBlobService(account_name=acctname, sas_token=token, protocol='http')
+
+generator = block_blob_service.list_blobs(container)
+
+for blob in generator:
+
+    print(blob.name)
+
+Image1.jpg
+
+Invoice.txt
+
+
+
+
+#Task: Revoke the read-only shared access signature.
+
+azure storage container policy delete --container customerdocs --name cdro -a $account -k $key
+
+cat ro.sas
+
+azure storage blob download --container customerdocs -b image1.jpg -a $account --sas "<read-only SAS token>"
+
+cat rw.sas
+
+azure storage blob download --container customerdocs -b image1.jpg -a $account --sas "<read, write, list SAS token>"
+
+
+

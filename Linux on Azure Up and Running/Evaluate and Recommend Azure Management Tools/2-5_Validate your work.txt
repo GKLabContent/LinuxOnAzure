@@ -1,0 +1,9 @@
+﻿
+#Challenge: Challenge: Migrate On-premises Storage to Azure      
+#Exercise: Validate your work
+#Task: Submit the results of your work for expert review.
+
+azure group delete -q challenges
+
+
+

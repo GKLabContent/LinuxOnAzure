@@ -1,0 +1,55 @@
+﻿
+#Challenge: Challenge: Migrate On-premises Storage to Azure      
+#Exercise: Provision and test highly available storage 
+#Task: Create a resource group
+
+azure login
+
+azure group create challenges-storage -l <your location>
+
+
+
+
+#Task: Provision the storage account and container.
+
+azure storage account create --sku-name RAGRS --kind Storage -l eastus -g challenges-storage <your unique storage account name>
+
+azure storage account keys list -g challenges-storage <your unique storage account name>
+
+azure storage container create --container images -p Blob -a <your unique storage account name> -k <storage account key>
+
+
+
+
+#Task: Upload an image to the account.
+
+cd ~/abFiles
+
+ls -l
+
+azure storage account keys list -g challenges-storage <your unique storage account name>
+
+azure storage blob upload -f image1.jpg --container images -a <your unique storage account name> -k <storage account key>
+
+azure storage blob list --container images -a <your unique storage account name> -k <storage account key>
+
+mkdir ~/webcontent
+
+cd ~/webcontent
+
+azure storage account show -g challenges-storage <your unique storage account name>
+
+wget https://
+
+<your unique storage account name>.blob.core.windows.net/images/image1.jpg
+
+ls -s
+
+wget https://
+
+<your unique storage account name>-secondary.blob.core.windows.net/images/image1.jpg
+
+ls –l
+
+
+
