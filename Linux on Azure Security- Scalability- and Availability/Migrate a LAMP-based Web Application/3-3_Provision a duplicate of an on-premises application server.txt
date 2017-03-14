@@ -1,0 +1,78 @@
+﻿
+#Challenge: Challenge: Provision Development Servers in Azure      
+#Exercise: Provision a duplicate of an on-premises application server
+#Task: Provision a storage account (optional).
+
+azure login
+
+azure storage account create --sku-name LRS --kind Storage -g challenges-dev –l <your location> <your storage account>
+
+
+
+
+#Task: Provision the network.
+
+azure network vnet create -g challenges-dev -n test-msg-VNET -l <your location> -a 10.3.0.0/16
+
+azure network vnet subnet create -g challenges-dev -e test-msg-VNET -n default -a 10.3.0.0/24
+
+
+
+
+#Task: Provision the virtual machine.
+
+azure storage account keys list -g challenges-dev <your storage account>
+
+azure storage blob copy start \
+
+--source-uri "https://gklabcontent.blob.core.windows.net/vm-images/ubuntu.vhd" \
+
+--dest-account-name <your account> \
+
+--dest-container vhds \
+
+--dest-blob ubuntu.vhd \
+
+--dest-account-key <your key>
+
+Azure storage blob copy show -a <your storage account> -k <your storage key> vhds test.vhd
+
+azure network public-ip create -g challenges-dev -n test-msg-PIP -l <your location>
+
+azure network nic create -g challenges-dev -n test-msg-NIC -l <your location> -k default -m test-msg-VNET -p test-msg-PIP
+
+azure vm create \
+
+-g challenges-dev \
+
+-n test-msg-VM \
+
+-f test-msg-NIC \
+
+-l <your Azure location> \
+
+-y linux \
+
+-o <your storage account in the challenges resource group> \
+
+-u student \
+
+-R vhds \
+
+-Q https://<your storage account>.blob.core.windows.net/vhds/ubuntu.vhd
+
+
+
+
+#Task: Verify the test server.
+
+azure vm show -g challenges-dev test-msg-vm | grep "Public IP address"
+
+ssh student@<FQDN or public IP address>
+
+cat ~/readme.txt
+
+ps -aux | grep waagent
+
+
+

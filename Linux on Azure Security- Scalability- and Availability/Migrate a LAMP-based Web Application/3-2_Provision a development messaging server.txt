@@ -1,0 +1,62 @@
+﻿
+#Challenge: Challenge: Provision Development Servers in Azure      
+#Exercise: Provision a development messaging server
+#Task: Provision a storage account (optional).
+
+azure login
+
+azure storage account create --sku-name LRS --kind Storage -g challenges-dev –l <your location> <your storage account>
+
+
+
+
+#Task: Provision the network.
+
+azure network vnet create -g challenges-dev -n dev-msg-VNET -l <your location> -a 10.2.0.0/16
+
+azure network vnet subnet create -g challenges-dev -e dev-msg-VNET -n default -a 10.2.0.0/24
+
+azure network nsg create -g challenges-dev -n dev-msg-NSG -l <your location>
+
+azure network nsg rule create -g challenges-dev -a dev-msg-NSG -n ssh -d "Allow ssh" -p Tcp -f "*" -o "*" -e "*" -u "22" -c Allow -y 1000 -r Inbound
+
+azure network nsg rule create -g challenges-dev -a dev-msg-NSG -n msgsvr -d "Allow 8080" -p Tcp -f "*" -o "*" -e "*" -u "8080" -c Allow -y 1001 -r Inbound
+
+azure network vnet subnet set -g challenges-dev -e dev-msg-VNET -n default -o dev-msg-NSG
+
+
+
+
+#Task: Provision the virtual machine.
+
+azure network public-ip create -g challenges-dev -n dev-msg-PIP -l <your location> -d <a unique DNS label>
+
+azure network nic create -g challenges-dev -n dev-msg-NIC -l <your location> -k default -m dev-msg-VNET -p dev-msg-PIP
+
+azure vm create -g challenges-dev -n dev-msg-VM -l <your location> -y Linux -Q Canonical:ubuntuserver:14.04.4-LTS:latest -N dev-msg-NIC -u student -z STANDARD_A1_V2 -o <your storage account>
+
+
+
+
+#Task: Install and test the messaging server.
+
+azure vm show -g challenges-dev dev-msg-VM
+
+ssh student@<FQDN or public IP address>
+
+sudo apt-get update
+
+sudo apt-get install -y git
+
+git clone https://github.com/
+
+cd msgsvr
+sudo chmod +x update.sh
+sudo sh update.sh
+
+sudo shutdown –r now
+
+~/labfiles/Client.py -a <FQDN or public IP of message server> -p 8080 -c 1
+
+
+

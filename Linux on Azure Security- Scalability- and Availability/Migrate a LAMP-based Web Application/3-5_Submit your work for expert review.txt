@@ -1,0 +1,9 @@
+﻿
+#Challenge: Challenge: Provision Development Servers in Azure      
+#Exercise: Submit your work for expert review
+#Task: Test the development messaging server.
+
+​​​​​​​~/labfiles/Client.py -a <public IP> -p 8080 -c 1
+
+
+
