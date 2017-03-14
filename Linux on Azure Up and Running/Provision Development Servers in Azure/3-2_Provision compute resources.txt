@@ -1,0 +1,64 @@
+﻿
+#Challenge: Challenge: Migrate a LAMP-based Web Application      
+#Exercise: Provision compute resources
+#Task: Provision the storage account.
+
+azure storage account create -g wunhillweb -l <your location> --sku-name lrs --kind storage <your storage account>
+
+
+
+
+#Task: Provision virtual machines.
+
+mkdir ~/.ssh 
+chmod 700 ~/.ssh 
+ssh-keygen -t rsa -b 4096
+
+azure availset create -g wunhillweb -n wunhillweb-AS -l <your location> -a 5 -b 2
+
+azure vm create -g wunhillweb -l <your location> -y Linux -Q Canonical:Ubuntuserver:14.04.4-LTS:latest -u student -z STANDARD_A1_V2 -o <your storage account> --boot-diagnostics-storage-uri "https:// <your storage account>.blob.core.windows.net" --tags “system=wunhillweb” -n header-VM -f header-NIC -M "/user/student/.ssh/id_rsa.pub"
+
+
+
+azure vm create -g wunhillweb -l <your location> -y Linux -Q Canonical:Ubuntuserver:14.04.4-LTS:latest -u student -z STANDARD_A1_V2 -o <your storage account> --boot-diagnostics-storage-uri “” --tags “system=wunhillweb” -r wunhillweb-AS -n webserver1-VM -f webserver1-NIC
+
+azure vm create -g wunhillweb -l <your location> -y Linux -Q Canonical:Ubuntuserver:14.04.4-LTS:latest -u student 
+
+ -o <your storage account> --boot-diagnostics-storage-uri "https://<your storage account>.blob.core.windows.net" –-tags “system=wunhillweb” -r wunhillweb-AS -n webserver2-VM -f webserver2-NIC
+
+
+
+
+#Task: Install LAMP stack and web app on web servers.
+
+azure vm show -g wunhillweb header-VM | grep "Public IP address"
+
+ssh student@<public IP address>
+
+ssh 
+
+sudo apt-get update
+
+sudo apt-get install -y git-core tasksel 
+
+sudo tasksel install lamp-server
+
+sudo chmod 777 /var/www/html
+
+git clone https://github.com/GKLabContent/LinuxOnAzure /var/www/html/vendors
+
+curl 
+
+ | grep “SERVER_ADDR”
+
+
+
+
+#Task: Test the web servers from the header server.
+
+curl http://10.20.2.4/vendors/phpinfo.php | grep “SERVER_ADDR”
+
+curl http://10.20.2.4/vendors/phpinfo.php | grep “SERVER_ADDR”
+
+
+

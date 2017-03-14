@@ -1,0 +1,38 @@
+﻿
+#Challenge: Challenge: Migrate a LAMP-based Web Application      
+#Exercise: Implement load balancing
+#Task: Provision Azure load balancer.
+
+azure network lb create -g wunhillweb -l <your location> --tags "system=wunhillweb" -n wunhillweb-LB
+
+azure network lb frontend-ip create -g wunhillweb -l wunhillweb-LB -n public -i wunhillweb-PIP 
+
+azure network lb address-pool create -g wunhillweb -l wunhillweb-LB -n webservers
+
+azure network lb probe create -g wunhillweb -l wunhillweb-LB -n httpprobe -p "http" -o 80 -f "vendors/phpinfo.php" -i 15 -c 4
+
+azure network lb rule create -g wunhillweb -l wunhillweb-LB -n http -p Tcp -f 80 -b 80 -t public -o webservers -a httpprobe
+
+azure network lb rule create -g wunhillweb -l wunhillweb-LB -n https -p Tcp -f 443 -b 443 -t public -o webservers -a httpprobe
+
+azure network nic ip-config address-pool create -g wunhillweb -c webserver1-NIC -n default-ip-config -l wunhillweb-LB -a webservers
+
+azure network nic ip-config address-pool create -g wunhillweb -c webserver2-NIC -n default-ip-config -l wunhillweb-LB -a webservers
+
+
+
+
+#Task: Test Azure load balancer.
+
+azure network public-ip list –g wunhillweb
+
+Curl http://<FQDN>/vendors/phpinfo.php | grep “SERVER_ADDR”
+
+azure vm stop -g wunhillweb webserver1-VM
+
+azure vm start -g wunhillweb webserver1-VM
+
+azure vm stop -g wunhillweb webserver2-VM
+
+
+
