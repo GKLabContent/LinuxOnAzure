@@ -1,0 +1,27 @@
+﻿
+#Challenge: Challenge: Provision Development Environments and Scalable Production Environments in Azure      
+#Exercise: Provision GitHub Enterprise Server in Azure
+#Task: Create the resource group.
+
+Azure login
+
+Azure group create –l <your location> challenges-github
+
+
+
+
+#Task: Create template for GitHub Enterprise server.
+
+cd ~/labfiles
+​​​​​​​azure group export -n challenges-github
+
+Azure group delete -q challenges-github
+
+azure group create -l <Your Azure location> challenges-github
+
+azure group deployment create -g challenges-github -n deploy -f challenges-github.json
+
+virtualmachines_vmt1_adminPassword: GKPa$$w0rd12
+
+
+
