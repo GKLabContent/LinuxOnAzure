@@ -1,0 +1,9 @@
+﻿
+#Challenge: Challenge: Extend an On-premises Network into Azure      
+#Exercise: Validate your work
+#Task: Submit the results of your work for expert review.
+
+azure group delete -q challenges
+
+
+
