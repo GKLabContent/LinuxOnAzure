@@ -1,0 +1,16 @@
+﻿
+#Challenge: Challenge: Provision Development Servers in Azure      
+#Exercise: Validate your work
+#Task: Test the development messaging server.
+
+​​​​​​​~/labfiles/Client.py -a <public IP> -p 8080 -c 1
+
+
+
+
+#Task: Submit the results of your work for expert review.
+
+azure group delete -q challenges
+
+
+

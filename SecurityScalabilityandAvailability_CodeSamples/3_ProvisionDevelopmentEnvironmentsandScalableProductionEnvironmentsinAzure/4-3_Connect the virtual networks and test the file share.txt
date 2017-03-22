@@ -1,0 +1,66 @@
+﻿
+#Challenge: Challenge: Extend an On-premises Network into Azure      
+#Exercise: Connect the virtual networks and test the file share
+#Task: Provision on-premises to file server connection.
+
+azure network vpn-connection create -g challenges-network -n onprem2fileserver-GCON -l <your location> -i onprem-GWAY -r challenges-network -e fileserver-GWAY -m challenges-network -y Vnet2Vnet -k ABC123
+
+
+
+
+#Task: Provision file server to on-premises connection.
+
+azure network vpn-connection create -g challenges-network -n fileserver2onprem-GCON -l <your location> -i fileserver-GWAY -r challenges-network -e onprem-GWAY -m challenges-network -y V
+
+net2Vnet -k ABC123
+
+
+
+
+#Task: Configure File Share on file server VM.
+
+azure vm show –g challenges-network onprem-VM | grep “Public IP address”
+
+ssh student@<public IP address>
+
+ssh student@10.20.0.4
+
+sudo apt install –y samba
+
+[demo]
+    comment = Demonstration file share
+    path = /shares/demo
+    browsable = yes
+    guest ok = yes
+    read only = no
+    create mask = 0755
+
+sudo mkdir -p /shares/demo
+sudo chmod 777 /shares/demo/
+
+touch /shares/demo/readme.txt
+echo "File share demonstration" > /shares/demo/readme.txt
+
+sudo shutdown –r now
+
+
+
+
+#Task: Test file share.
+
+azure vm show -g challenges-network onprem-VM | grep "Public IP"
+
+ssh student@<Public IP address>
+
+sudo apt-get install –y smbclient
+
+smbclient -L //10.20.0.4
+
+sudo mkdir /mnt/demo
+sudo chmod +777 /mnt/demo
+sudo mount -t cifs //10.20.0.4/demo -o username=student /mnt/demo/
+ls /mnt/demo/
+cat /mnt/demo/readme.txt
+
+
+

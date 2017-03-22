@@ -1,0 +1,56 @@
+﻿
+#Challenge: Challenge: Migrate a LAMP-based Web Application      
+#Exercise: Provision networking resources 
+#Task: Create resource group.
+
+azure group create -l <your location> wunhillweb
+
+
+
+
+#Task: Create network and subnets.
+
+azure network vnet create -g wunhillweb -n wunhillweb-VNET -l <your location> -a 10.20.0.0/16 -t "system=wunhillweb"
+
+azure network vnet subnet create -g wunhillweb -e wunhillweb-VNET -n header -a 10.20.1.0/24
+
+azure network vnet subnet create -g wunhillweb -e wunhillweb-VNET -n servers -a 10.20.2.0/24
+
+azure network vnet subnet create -g wunhillweb -e wunhillweb-VNET -n GatewaySubnet -a 10.20.3.0/24
+
+
+
+
+#Task: Create public IPs and NICs.
+
+azure network public-ip create -g wunhillweb -n wunhillweb-PIP -l <your location> -d “<unique DNS name>” -t "system=wunhillweb"
+
+azure network public-ip create -g wunhillweb -n header-PIP -l <your location> -t "system=wunhillweb"
+
+azure network nic create -g wunhillweb -n webserver1-NIC -l <your location> -k servers -m wunhillweb-VNET -t "system=wunhillweb"
+
+azure network nic create -g wunhillweb -n webserver2-NIC -l <your location> -k servers -m wunhillweb-VNET -t "system=wunhillweb"
+
+azure network nic create -g wunhillweb -n header-NIC -l <your location> -k header -m wunhillweb-VNET -p header-PIP -t "system=wunhillweb"
+
+
+
+
+#Task: Create network security groups.
+
+azure network nsg create -g wunhillweb -l <your location> -n servers-NSG -t "system=wunhillweb"
+
+azure network nsg create -g wunhillweb -l <your location> -n header-NSG -t "system=wunhillweb"
+
+azure network nsg rule create -g wunhillweb -a servers-NSG -n http -d "Allow HTTP traffic" -p Tcp -f "*" -o "*" -e "*" -u 80 -c Allow -y 1000 -r Inbound
+
+azure network nsg rule create -g wunhillweb -a servers-NSG -n https -d "Allow HTTPS traffic" -p Tcp -f "*" -o "*" -e "*" -u 443 -c Allow -y 1001 -r Inbound
+
+azure network nsg rule create -g wunhillweb -a header-NSG -n ssh -d "Allow SSH traffic" -p Tcp -f "*" -o "*" -e "*" -u 22 -c Allow -y 1000 -r Inbound
+
+azure network vnet subnet set -g wunhillweb -e wunhillweb-VNET -n servers -o servers-NSG
+
+azure network vnet subnet set -g wunhillweb -e wunhillweb-VNET -n header -o header-NSG
+
+
+

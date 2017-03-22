@@ -1,9 +1,0 @@
-﻿
-#Challenge: Challenge: Provision Development Environments and Scalable Production Environments in Azure      
-#Exercise: Validate your work
-#Task: Submit the results of your work for expert review.
-
-azure group delete -q challenges
-
-
-

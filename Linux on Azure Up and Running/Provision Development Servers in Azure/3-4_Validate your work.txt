@@ -1,9 +1,0 @@
-﻿
-#Challenge: Challenge: Migrate a LAMP-based Web Application      
-#Exercise: Validate your work
-#Task: Submit the results of your work for expert review.
-
-azure group delete -q challenges
-
-
-
